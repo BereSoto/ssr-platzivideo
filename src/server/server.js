@@ -1,0 +1,50 @@
+import express from 'express';
+import dotenv from 'dotenv'; //importar archivos de configuracion definidos
+import webpack from 'webpack';
+
+dotenv.config(); // agregue la configuracion
+
+const ENV = process.env.NODE_ENV; //constante con nuestro entorno
+const PORT = process.env.PORT || 3000; //definiendo un puerto
+
+const app = express();
+
+if (ENV === 'development') {
+  console.log('Loading dev config');
+  const webpackConfig = require('../../webpack.config');
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-hot-middleware');
+  const compiler = webpack(webpackConfig);
+  const serverConfig = {
+    contentBase: `http://localhost${PORT}`,
+    port: PORT,
+    publictPath: webpackConfig.output.publicPath,
+    hot: true,
+    historyApiFallback: true,
+    stats: { colors: true },
+  };
+  app.use(webpackDevMiddleware(compiler, serverConfig));
+  app.use(webpackHotMiddleware(compiler));
+}
+
+app.get('*', (req, res) => {
+  res.send(`
+  <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Platzi Video</title>
+        <link rel="stylesheet" href="assets/app.css" type="text/css"></link>
+      </head>
+      <body>
+        <div id="app"></div>
+        <script src="assets/app.js" type="text/javascript"></script>
+        <script src="assets/vendor.js" type="text/javascript"></script>
+      </body>
+    </html>
+  `);
+});
+
+app.listen(PORT, (err) => {
+  if (err) console.log(err);
+  console.log(`Server running on ${PORT} port`);
+});
