@@ -25,9 +25,9 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   optimization: {
-    minimizer: isProd ? [
-      new TerserPlugin(),
-    ] : [],
+    // minimizer: isProd ? [
+    //   new TerserPlugin(),
+    // ] : [],
     splitChunks: {
       chunks: 'async',
       name: true,
